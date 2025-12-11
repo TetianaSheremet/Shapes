@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <title>Розпізнавання фігур</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="wrapper">
+    <h1>Розпізнавання фігур</h1>
+
+    <section class="canvas-area">
+      <div class="canvas-wrapper">
+        <canvas id="canvas" width="280" height="280"></canvas>
+        <span id="placeholder-text">Поле для фігури</span>
+      </div>
+    </section>
+
+    <section class="controls">
+      <input id="fileInput" type="file" accept="image/*" hidden />
+
+      <div class="button-row">
+        <button id="uploadBtn" title="Завантажити зображення">
+          <i class="fa-solid fa-upload"></i> Завантажити
+        </button>
+
+        <button id="saveBtn" title="Зберегти зображення">
+          <i class="fa-solid fa-floppy-disk"></i> Зберегти
+        </button>
+
+        <button id="clearBtn" title="Очистити">
+          <i class="fa-solid fa-trash"></i> Очистити
+        </button>
+
+        <select id="formatSelect" class="format-select" title="Формат збереження">
+          <option value="png">PNG</option>
+          <option value="jpg">JPG</option>
+          <option value="bmp">BMP</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button id="predictBtn" class="main-action">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Визначити форму
+      </button>
+
+      <div class="progress-container hidden">
+        <div id="progressBar"></div>
+      </div>
+
+      <p id="result">Результат:</p>
+    </section>
+
+    <section class="info">
+      <button id="infoBtn" title="Деталі зображення">
+        <i class="fa-solid fa-circle-info"></i>
+      </button>
+
+      <div id="infoBox" class="hidden">
+        <p><strong>Розмір:</strong> <span id="imgSize">–</span></p>
+        <p><strong>Роздільність:</strong> <span id="imgResolution">–</span></p>
+        <p><strong>Формат:</strong> <span id="imgFormat">–</span></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

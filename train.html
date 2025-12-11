@@ -1,0 +1,73 @@
+let model;
+
+async function loadModel() {
+  model = await tf.loadLayersModel("model/shape-model.json");
+}
+
+async function predictImage(path) {
+  const img = new Image();
+  img.src = path;
+  await new Promise((res) => (img.onload = res));
+
+  const tensor = tf.tidy(() =>
+    tf.browser.fromPixels(img)
+      .resizeBilinear([64, 64])
+      .toFloat()
+      .div(255)
+      .expandDims(0)
+  );
+
+  const start = performance.now();
+  const prediction = model.predict(tensor);
+  await prediction.data(); // чекати GPU виконання!
+  const end = performance.now();
+
+  tensor.dispose();
+  prediction.dispose();
+  return end - start;
+}
+
+async function runBenchmark() {
+  const status = document.getElementById("status");
+  status.textContent = "Завантаження моделі...";
+  await loadModel();
+  status.textContent = " Модель завантажена! Починаємо тестування...";
+
+  const results = [];
+  const files = [
+    "test_images/256.png",
+    "test_images/512.png",
+    "test_images/1024.png",
+    "test_images/2000.png",
+    "test_images/4000.png",
+    "test_images/4000(2).png"
+  ];
+
+  for (const f of files) {
+    status.textContent = ` Тестуємо ${f}...`;
+    const time = await predictImage(f);
+    results.push({ file: f, time: time.toFixed(2) });
+  }
+
+  status.textContent = " Тестування завершено!";
+  showResults(results);
+}
+
+function showResults(results) {
+  const container = document.getElementById("results");
+  const table = document.createElement("table");
+  table.innerHTML = `
+    <tr><th>Зображення</th><th>Час виконання (мс)</th></tr>
+  `;
+  for (const r of results) {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${r.file}</td><td>${r.time}</td>`;
+    table.appendChild(row);
+  }
+  container.innerHTML = "";
+  container.appendChild(table);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("runBtn").onclick = runBenchmark;
+});
